@@ -1,0 +1,91 @@
+.react-basic-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  background: var(--bg, #ffffff);
+  border: 1px solid var(--border, #e5e4e7);
+  border-radius: 12px;
+  box-shadow: var(--shadow, rgba(0, 0, 0, 0.05) 0 4px 12px);
+  text-align: left;
+}
+
+.react-basic-container h2 {
+  font-size: 24px;
+  color: var(--text-h, #08060d);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--accent, #aa3bff);
+  padding-bottom: 8px;
+}
+
+.main-list {
+  padding-left: 20px;
+  color: var(--text-h, #08060d);
+}
+
+.main-list > li {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.main-list ul {
+  list-style-type: circle;
+  padding-left: 20px;
+  margin-top: 6px;
+}
+
+.main-list ul li {
+  font-size: 0.95rem;
+  color: var(--text, #6b6375);
+  margin-bottom: 4px;
+}
+
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border, #e5e4e7);
+}
+
+.select-box,
+.input-text,
+.submit-btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.select-box {
+  background: var(--social-bg, #f4f3ec);
+  border: 1px solid var(--border, #e5e4e7);
+  color: var(--text-h, #08060d);
+  cursor: pointer;
+}
+
+.input-text {
+  flex-grow: 1;
+  border: 1px solid var(--border, #e5e4e7);
+  background: var(--bg, #ffffff);
+  color: var(--text-h, #08060d);
+}
+
+.input-text:focus {
+  outline: 2px solid var(--accent, #aa3bff);
+  outline-offset: -1px;
+}
+
+.submit-btn {
+  background: var(--accent, #aa3bff);
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
