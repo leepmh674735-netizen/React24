@@ -1,10 +1,11 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
-import Home from './components/Home';
+import Home from './Home';
 import TopNavi from "./TopNavi";
-import NotFound from './components/NotFound';
+import NotFound from './NotFound';
 import LayoutIndex from './LayoutIndex';
+import CommonLayout from './CommonLayout';
 
 function App() {
     return (

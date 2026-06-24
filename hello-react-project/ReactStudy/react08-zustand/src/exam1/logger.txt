@@ -1,0 +1,14 @@
+const logger = (config) => (set, get, api)
+  config(
+    (...args) => {
+      console.log('[Zustand 로그]', ...args);
+      set(...args)
+    },
+    get, api
+  );
+
+const useStudentStore = create(
+    logger(
+        (set, get) => ({ ... })
+    )
+);

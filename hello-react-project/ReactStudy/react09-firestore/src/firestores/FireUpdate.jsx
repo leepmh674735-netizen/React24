@@ -1,0 +1,92 @@
+import { firestore } from "../firestoreConfig";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+const FireUpdate = () => {
+    const params = useParams();
+    const navigate = useNavigate();
+
+    const [id, setId] = useState('');
+    const [pass, setPass] = useState('');
+    const [name, setName] = useState('');
+
+    const memberEdit = async (p_collection) => {
+        await setDoc(doc(firestore, p_collection, params.userid), {
+            pass,
+            name,
+            regdate: new Date().toISOString().slice(0, 10),
+        }, { merge: true });
+        alert('수정성공');
+        navigate('/read');
+    };
+
+    useEffect(() => {
+        const getMember = async (userid) => {
+            const docRef = doc(firestore, "members", userid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                console.log("문서:", docSnap.data());
+                let callData = docSnap.data();
+                setId(userid);
+                setPass(callData.pass || '');
+                setName(callData.name || '');
+            } else {
+                console.log("문서가 없습니다");
+            }
+        };
+
+        if (params.userid) {
+            getMember(params.userid);
+        }
+    }, [params.userid]);
+
+    return (
+        <>
+            <h2>Firestore - 수정하기</h2>
+            <form onSubmit={(event) => {
+                event.preventDefault();
+                let collection = event.target.collection.value;
+                memberEdit(collection);
+            }}>
+                <table border='1'>
+                    <tbody>
+                        <tr>
+                            <td>컬렉션</td>
+                            <td><input type="text" name="collection" defaultValue="members" readOnly /></td>
+                        </tr>
+                        <tr>
+                            <td>아이디(변경불가)</td>
+                            <td><input type="text" name="id" value={id} readOnly /></td>
+                        </tr>
+                        <tr>
+                            <td>비밀번호</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="pass"
+                                    value={pass}
+                                    onChange={(event) => setPass(event.target.value)}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>이름</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit">수정</button>
+            </form>
+        </>
+    );
+};
+
+export default FireUpdate;

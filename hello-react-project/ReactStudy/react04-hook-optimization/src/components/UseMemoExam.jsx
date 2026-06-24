@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 const isPrime = (num) => {
     console.log('소수판단중..');
     for (let exCost = 1; exCost < 1234567890; exCost++) {
-
+        // empty loop to simulate heavy load
     }
     if (num <= 1) return false;
     for (let i = 2; i <= Math.sqrt(num); i++) {

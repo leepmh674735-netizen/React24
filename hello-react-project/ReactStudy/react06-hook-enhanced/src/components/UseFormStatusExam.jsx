@@ -43,6 +43,6 @@ const UseFormStatusExam = () => {
             {message && <p>{message}</p>}
         </>
     );
-};
+}
 
 export default UseFormStatusExam;

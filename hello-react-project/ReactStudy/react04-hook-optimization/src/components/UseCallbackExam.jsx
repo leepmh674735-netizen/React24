@@ -1,13 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+
+const colorArr = ['red', 'green', 'blue'];
 
 const DivBox = ({ fnBoxStyle, numberVar }) => {
-    const [myStyle, setMyStyle] = useState({});
-
-    useEffect(() => {
-        console.log('박스 스타일 변경');
-        setMyStyle(fnBoxStyle());
-    }, [fnBoxStyle]);
-
+    const myStyle = fnBoxStyle();
     return <div style={myStyle}>{numberVar}</div>;
 };
 
@@ -15,7 +11,6 @@ const UseCallbackExam = () => {
     const [boxSize, setboxSize] = useState(100);
     const [boxColor, setboxColor] = useState(0);
     const [number, setNumber] = useState(0);
-    const colorArr = ['red', 'green', 'blue'];
 
     const fnBoxStyle = useCallback(() => {
         return {

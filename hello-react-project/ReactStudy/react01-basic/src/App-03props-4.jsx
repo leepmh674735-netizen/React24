@@ -11,3 +11,5 @@ function App() {
     <MyComponent p1={'HTML5'} p2={'CSS3'} p3={'Javascript'} p4={'jQuery'} />
     </>)
 }
+
+export default App;

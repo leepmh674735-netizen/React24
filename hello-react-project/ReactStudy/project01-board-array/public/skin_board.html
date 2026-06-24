@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 UI</title>
+    <style>
+        * {
+            margin: 5px;
+        }
+
+        input,
+        textarea {
+            width: 95%;
+        }
+
+        input[type=submit] {
+            width: 100px;
+        }
+
+        .board-table {
+            border: 1px solid gray;
+            border-collapse: collapse;
+            width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .board-table tr {
+            text-align: center;
+        }
+
+        .board-table th,
+        .board-table td {
+            border: 1px solid gray;
+            padding: 5px;
+        }
+
+        .board-table td {
+            text-align: left;
+        }
+
+        .board-table .cen {
+            text-align: center;
+        }
+
+        .board-table .subject {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>게시판-목록</h2>
+    </header>
+    <nav>
+        <a href="/">글쓰기</a>
+    </nav>
+    <article>
+        <table class="board-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="cen">1</td>
+                    <td><a href="/">오늘은 React공부하는날</a></td>
+                    <td class="cen">낙짜쌤</td>
+                    <td class="cen">2030-05-05</td>
+                </tr>
+            </tbody>
+        </table>
+    </article>
+
+    <header>
+        <h2>게시판-열람</h2>
+    </header>
+    <nav>
+        <a href="/">목록</a>&nbsp;
+        <a href="/">수정</a>&nbsp;
+        <a href="/">삭제</a>
+    </nav>
+    <article>
+        <table class="board-table">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">작성자</th>
+                    <td>성유겸</td>
+                </tr>
+                <tr>
+                    <th>제목</th>
+                    <td>#오늘은 React공부하는날</td>
+                </tr>
+                <tr>
+                    <th>날짜</th>
+                    <td>2023-05-05</td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td>열심히 해봅시당 열공 합시당</td>
+                </tr>
+            </tbody>
+        </table>
+    </article>
+
+    <header>
+        <h2>게시판-작성</h2>
+    </header>
+    <nav>
+        <a href="/">목록</a>
+    </nav>
+    <article>
+        <form>
+            <table class="board-table">
+                <tbody>
+                    <tr>
+                        <th style="width: 25%;">작성자</th>
+                        <td><input type="text" name="writer" /></td>
+                    </tr>
+                    <tr>
+                        <th>제목</th>
+                        <td><input type="text" name="title" /></td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+                        <td><textarea name="content" rows="5"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" value="전송">
+        </form>
+    </article>
+</body>
+
+</html>

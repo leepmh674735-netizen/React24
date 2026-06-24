@@ -9,7 +9,7 @@ function MoveBox(props) {
     const boxStyle = {
         backgroundColor: 'red',
         position: 'relative',
-        textAlign: 'center' as const,
+        textAlign: 'center',
         width: '100px',
         height: '100px',
         margin: '10px',

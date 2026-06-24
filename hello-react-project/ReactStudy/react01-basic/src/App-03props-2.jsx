@@ -1,4 +1,4 @@
-function MyComponent(prop) {
+function MyComponent(props) {
     return (<>
         <h2>props 객체 사용 구조 </h2>
         <p>
@@ -11,3 +11,5 @@ function App() {
         <MyComponent p1={'HTML5'} p2={'CSS3'} p3={'Javascript'} p4={'jQuery'} />
     </>)
 }
+
+export default App;
