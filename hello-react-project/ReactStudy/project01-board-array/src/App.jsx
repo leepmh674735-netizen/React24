@@ -2,9 +2,11 @@ import { useState } from 'react';
 import NavList from "./components/navigation/NavList";
 import NavWrite from "./components/navigation/NavWrite";
 import NavView from "./components/navigation/NavView";
+import NavEdit from "./components/navigation/NavEdit";
 import ArticleList from "./components/article/ArticleList";
 import ArticleView from "./components/article/ArticleView";
 import ArticleWrite from "./components/article/ArticleWrite";
+import ArticleEdit from "./components/article/ArticleEdit";
 
 function Header(props) {
     return (
@@ -21,8 +23,6 @@ function App() {
             title: "오늘은 리액트 공부하는날",
             writer: "낙자쌤",
             date: "2025-01-01",
-
-            
             contents: "리액트를 뽀개봅이당"
         },
         {
@@ -41,7 +41,7 @@ function App() {
         },
     ]);
 
-    const [mode, setMode] = useState('LIST');
+    const [mode, setMode] = useState('list');
     const [selectNo, setSelectNo] = useState(1);
     const [nextNo, setNextNo] = useState(4);
 
@@ -55,22 +55,30 @@ function App() {
         };
         setBoardData([...boardData, newPost]);
         setNextNo(nextNo + 1);
-        setMode('LIST');
+        setMode('list');
     };
 
     const handleDelete = () => {
         if (window.confirm('정말 삭제하시겠습니까?')) {
             const filteredData = boardData.filter(post => post.no !== selectNo);
             setBoardData(filteredData);
-            setMode('LIST');
+            setMode('list');
         }
+    };
+
+    const handleEdit = (no, writer, title, contents) => {
+        const updatedData = boardData.map(post =>
+            post.no === no ? { ...post, writer, title, contents } : post
+        );
+        setBoardData(updatedData);
+        setMode('view');
     };
 
     let headerTitle = "";
     let navComponent = null;
     let articleComponent = null;
 
-    if (mode === 'LIST') {
+    if (mode === 'list') {
         headerTitle = "게시판-목록";
         navComponent = <NavList onChangeMode={(m) => setMode(m)} />;
         articleComponent = (
@@ -82,15 +90,23 @@ function App() {
                 }}
             />
         );
-    } else if (mode === 'VIEW') {
+    }
+    else if (mode === "view") {
         headerTitle = "게시판-열람";
-        navComponent = <NavView onChangeMode={(m) => setMode(m)} onDelete={handleDelete} />;
+        navComponent = <NavView onChangeMode={(pmode) => setMode(pmode)} onDelete={handleDelete} />;
         const selectedPost = boardData.find(post => post.no === selectNo);
         articleComponent = <ArticleView post={selectedPost} />;
-    } else if (mode === 'WRITE') {
-        headerTitle = "게시판-작성";
+    }
+    else if (mode === "write") {
+        headerTitle = "게시판 쓰기";
         navComponent = <NavWrite onChangeMode={(m) => setMode(m)} />;
         articleComponent = <ArticleWrite onWrite={handleWrite} />;
+    }
+    else if (mode === 'edit') {
+        headerTitle = '게시판 수정';
+        navComponent = <NavEdit onChangeMode={(m) => setMode(m)} onBack={() => setMode('view')} />;
+        const selectedPost = boardData.find(post => post.no === selectNo);
+        articleComponent = <ArticleEdit selectRow={selectedPost} editAction={handleEdit} />;
     }
 
     return (

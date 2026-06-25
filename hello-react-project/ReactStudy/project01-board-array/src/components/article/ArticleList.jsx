@@ -1,7 +1,31 @@
 function ArticleList(props) {
+    const lists = [];
+    
+    for (let i = 0; i < props.boardData.length; i++) {
+        let row = props.boardData[i];
+        lists.push(
+            <tr key={row.no}>
+                <td className="cen">{row.no}</td>
+                <td>
+                    <a 
+                        href={'/read/' + row.no} 
+                        onClick={(event) => {
+                            event.preventDefault();
+                            props.onChangeMode('view', row.no);
+                        }}
+                    >
+                        {row.title}
+                    </a>
+                </td>
+                <td className="cen">{row.writer}</td>
+                <td className="cen">{row.date}</td>
+            </tr>
+        );
+    }
+    
     return (
         <article>
-            <table id="boardTable">
+            <table id="boardTitle">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -11,21 +35,7 @@ function ArticleList(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.boardData.map((row) => (
-                        <tr key={row.no}>
-                            <td className="cen">{row.no}</td>
-                            <td>
-                                <a href="/" onClick={(e) => {
-                                    e.preventDefault();
-                                    props.onChangeMode('VIEW', row.no);
-                                }}>
-                                    {row.title}
-                                </a>
-                            </td>
-                            <td className="cen">{row.writer}</td>
-                            <td className="cen">{row.date}</td>
-                        </tr>
-                    ))}
+                    {lists}
                 </tbody>
             </table>
         </article>

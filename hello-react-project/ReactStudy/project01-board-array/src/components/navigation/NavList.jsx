@@ -1,10 +1,12 @@
 function NavList(props) {
     return (
         <nav>
-            <a href="/" onClick={(e) => {
-                e.preventDefault();
-                props.onChangeMode('WRITE');
-            }}>글쓰기</a>
+            <a href="/" onClick={function(event){
+                event.preventDefault();
+                props.onChangeMode('write');
+            }}>
+                글쓰기
+            </a>
         </nav>
     );
 }
