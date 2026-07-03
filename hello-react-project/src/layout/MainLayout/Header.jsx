@@ -6,59 +6,54 @@ function Header() {
   const { user, isAuthenticated, login, logout } = useAuth()
 
   return (
-    <header className="app-header">
-      <div className="header-logo">
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
-          React App
+    <nav className="navbar navbar-expand-lg navbar-light header-container rounded-4 mx-3 mx-md-4 mt-3 mb-4 shadow-sm border border-white">
+      <div className="container-fluid px-3">
+        {/* Brand Logo */}
+        <Link to="/" className="navbar-brand d-flex align-items-center gap-2" style={{ fontFamily: 'var(--heading)', fontWeight: '800' }}>
+          <span className="fs-3">🚀</span>
+          <span className="text-dark">React Playland</span>
         </Link>
-      </div>
-      <nav className="header-nav" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        {/* 라우터 링크 추가 */}
-        <Link to="/" style={{ textDecoration: 'none', color: 'var(--text)' }}>Home</Link>
-        <Link to="/basic" style={{ textDecoration: 'none', color: 'var(--text)' }}>Basic UI</Link>
 
-        <span style={{ color: 'var(--border)' }}>|</span>
-
-        <a href="https://react.dev" target="_blank" rel="noreferrer">React Docs</a>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer">Vite Docs</a>
-        
-        <span style={{ color: 'var(--border)' }}>|</span>
-        
-        {/* Auth 관련 UI */}
-        {isAuthenticated ? (
-          <div className="auth-info" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-            <span>Hi, {user.name}!</span>
-            <button 
-              onClick={logout} 
-              style={{
-                background: 'var(--accent-bg)',
-                border: '1px solid var(--accent-border)',
-                color: 'var(--accent)',
-                borderRadius: '4px',
-                padding: '4px 8px',
-                cursor: 'pointer'
-              }}
-            >
-              Logout
-            </button>
+        {/* Right side options */}
+        <div className="d-flex align-items-center gap-3">
+          <div className="d-none d-sm-flex align-items-center gap-3 me-2">
+            <Link to="/" className="text-decoration-none text-secondary fw-semibold small hover-opacity">
+              <i className="bi bi-house-door me-1"></i>Home
+            </Link>
+            <Link to="/basic" className="text-decoration-none text-secondary fw-semibold small hover-opacity">
+              <i className="bi bi-layout-text-window-reverse me-1"></i>Basic UI
+            </Link>
           </div>
-        ) : (
-          <button 
-            onClick={() => login('User')} 
-            style={{
-              background: 'var(--accent)',
-              border: 'none',
-              color: 'white',
-              borderRadius: '4px',
-              padding: '4px 12px',
-              cursor: 'pointer'
-            }}
-          >
-            Login
-          </button>
-        )}
-      </nav>
-    </header>
+
+          <span className="text-muted d-none d-sm-inline opacity-50">|</span>
+
+          {/* Auth System */}
+          {isAuthenticated ? (
+            <div className="d-flex align-items-center gap-2">
+              <div className="badge bg-cute-pink badge-cute border-0 d-flex align-items-center gap-1 py-2 text-dark">
+                <span>🧑‍💻</span>
+                <span>{user.name}</span>
+              </div>
+              <button 
+                onClick={logout} 
+                className="btn btn-sm btn-cute btn-cute-outline px-3 py-1.5"
+                style={{ fontSize: '0.85rem' }}
+              >
+                로그아웃 <i className="bi bi-box-arrow-right ms-1"></i>
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => login('학생')} 
+              className="btn btn-sm btn-cute btn-cute-primary px-3 py-1.5"
+              style={{ fontSize: '0.85rem' }}
+            >
+              로그인 <i className="bi bi-box-arrow-in-right ms-1"></i>
+            </button>
+          )}
+        </div>
+      </div>
+    </nav>
   )
 }
 
