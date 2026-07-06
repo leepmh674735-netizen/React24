@@ -144,6 +144,62 @@ function Dashboard() {
     }))
   }
 
+  // KakaoTalk Share handler
+  const handleKakaoShare = () => {
+    if (!window.Kakao) {
+      alert('카카오 SDK가 아직 로드되지 않았습니다. 잠시 후 다시 시도해 주세요!')
+      return
+    }
+
+    try {
+      if (!window.Kakao.isInitialized()) {
+        // 1. env 또는 localStorage에서 키 가져오기
+        let kakaoKey = import.meta.env.VITE_KAKAO_API_KEY || localStorage.getItem('kosmo_kakao_app_key')
+
+        // 2. 키가 없으면 사용자에게 귀엽게 입력 요청
+        if (!kakaoKey) {
+          kakaoKey = window.prompt(
+            '💬 카카오톡 공유 기능을 실행하기 위해 \nKakao Developers에서 발급받은 [JavaScript 앱 키]를 입력해 주세요!\n(입력하신 키는 브라우저에 안전하게 저장됩니다.)'
+          )
+          if (kakaoKey && kakaoKey.trim()) {
+            localStorage.setItem('kosmo_kakao_app_key', kakaoKey.trim())
+            kakaoKey = kakaoKey.trim()
+          } else {
+            return // 취소 시 리턴
+          }
+        }
+
+        window.Kakao.init(kakaoKey)
+      }
+
+      // 3. 카카오톡 공유 발송
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: 'React Playland 🚀✨',
+          description: '리액트 5대 실습 프로젝트와 실시간 강의 진도율 트래커가 있는 나만의 리액트 연구실로 초대합니다! 🧪💛',
+          imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&auto=format&fit=crop&q=80',
+          link: {
+            mobileWebUrl: window.location.origin,
+            webUrl: window.location.origin,
+          },
+        },
+        buttons: [
+          {
+            title: '구경하러 가기 🧪',
+            link: {
+              mobileWebUrl: window.location.origin,
+              webUrl: window.location.origin,
+            },
+          },
+        ],
+      })
+    } catch (error) {
+      console.error('Kakao share error:', error)
+      alert('카카오톡 공유 도중 에러가 발생했습니다. 앱 키가 올바른지, 혹은 플랫폼 사이트 도메인에 현재 주소가 등록되어 있는지 확인해 주세요!')
+    }
+  }
+
   // Calculate stats
   const completedCount = Object.values(lectureProgress).filter(Boolean).length
   const totalLectures = LECTURE_DATA.length
@@ -176,7 +232,14 @@ function Dashboard() {
           ))}
         </div>
         
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
+          <button 
+            onClick={handleKakaoShare}
+            className="btn btn-cute btn-sm shadow-sm d-flex align-items-center gap-1.5"
+            style={{ backgroundColor: '#fee500', color: '#191919', border: 'none' }}
+          >
+            <i className="bi bi-chat-fill"></i> 카카오톡 공유
+          </button>
           <Link to="/basic" className="btn btn-cute btn-cute-outline btn-sm shadow-sm">
             <i className="bi bi-list-task me-1"></i>기본 UI 실습
           </Link>
