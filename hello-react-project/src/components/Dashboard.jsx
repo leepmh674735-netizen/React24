@@ -180,16 +180,16 @@ function Dashboard() {
           description: '리액트 5대 실습 프로젝트와 실시간 강의 진도율 트래커가 있는 나만의 리액트 연구실로 초대합니다! 🧪💛',
           imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&auto=format&fit=crop&q=80',
           link: {
-            mobileWebUrl: window.location.origin,
-            webUrl: window.location.origin,
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href,
           },
         },
         buttons: [
           {
             title: '구경하러 가기 🧪',
             link: {
-              mobileWebUrl: window.location.origin,
-              webUrl: window.location.origin,
+              mobileWebUrl: window.location.href,
+              webUrl: window.location.href,
             },
           },
         ],
