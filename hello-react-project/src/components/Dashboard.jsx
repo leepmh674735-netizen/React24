@@ -83,6 +83,15 @@ const PROJECT_DATA = [
   }
 ]
 
+const BUBBLES = [
+  { id: 1, left: '10%', size: '35px', delay: '0s', duration: '14s' },
+  { id: 2, left: '25%', size: '55px', delay: '3s', duration: '18s' },
+  { id: 3, left: '45%', size: '25px', delay: '1s', duration: '12s' },
+  { id: 4, left: '65%', size: '60px', delay: '6s', duration: '20s' },
+  { id: 5, left: '80%', size: '30px', delay: '2s', duration: '15s' },
+  { id: 6, left: '92%', size: '45px', delay: '4s', duration: '16s' }
+]
+
 function Dashboard() {
   // Theme state: pink, mint, blue, purple
   const [activeTheme, setActiveTheme] = useState(() => {
@@ -91,7 +100,7 @@ function Dashboard() {
 
   // Dev note state
   const [devNote, setDevNote] = useState(() => {
-    return localStorage.getItem('kosmo_dashboard_note') || '오늘도 한 줄의 코드를 작성하며 멋진 개발자로 성장하는 중! 💻📝'
+    return localStorage.getItem('kosmo_dashboard_note') || '오늘도 한 줄의 코드를 작성하며 멋진 개발자로 성장하는 중! 💻⚛️'
   })
 
   // Random quote state
@@ -104,11 +113,13 @@ function Dashboard() {
     return saved ? JSON.parse(saved) : {}
   })
 
+  // Sparkle particles state
+  const [particles, setParticles] = useState([])
+
   // Theme changing effect
   useEffect(() => {
     localStorage.setItem('kosmo_dashboard_theme', activeTheme)
     
-    // Dynamically apply a root glow color change
     let glowColor = '#ff7b90' // pink default
     if (activeTheme === 'mint') glowColor = '#7bf0c2'
     if (activeTheme === 'blue') glowColor = '#7bd5ff'
@@ -136,12 +147,45 @@ function Dashboard() {
     }, 200)
   }
 
-  // Toggle checklist item
-  const handleToggleLecture = (id) => {
+  // Toggle checklist item + Sparkle effect
+  const handleToggleLecture = (id, e) => {
+    const isChecking = !lectureProgress[id]
+    
     setLectureProgress((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: isChecking
     }))
+
+    // Spawn sparkles if user marks as complete
+    if (isChecking && e) {
+      const rect = e.currentTarget.getBoundingClientRect()
+      const clickX = e.clientX - rect.left
+      const clickY = e.clientY - rect.top
+
+      const colors = ['#ff7b90', '#7bf0c2', '#7bd5ff', '#b388ff', '#fff37a']
+      const newParticles = []
+      
+      for (let i = 0; i < 15; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 40 + Math.random() * 90
+        newParticles.push({
+          id: `${Date.now()}-${i}-${Math.random()}`,
+          x: clickX,
+          y: clickY,
+          dx: `${Math.cos(angle) * speed}px`,
+          dy: `${Math.sin(angle) * speed}px`,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: `${6 + Math.random() * 8}px`
+        })
+      }
+
+      setParticles((prev) => [...prev, ...newParticles])
+
+      // Cleanup particles after animation finishes
+      setTimeout(() => {
+        setParticles((prev) => prev.filter(p => !newParticles.includes(p)))
+      }, 800)
+    }
   }
 
   // KakaoTalk Share handler
@@ -153,10 +197,8 @@ function Dashboard() {
 
     try {
       if (!window.Kakao.isInitialized()) {
-        // 1. env 또는 localStorage에서 키 가져오기
         let kakaoKey = import.meta.env.VITE_KAKAO_API_KEY || localStorage.getItem('kosmo_kakao_app_key')
 
-        // 2. 키가 없으면 사용자에게 귀엽게 입력 요청
         if (!kakaoKey) {
           kakaoKey = window.prompt(
             '💬 카카오톡 공유 기능을 실행하기 위해 \nKakao Developers에서 발급받은 [JavaScript 앱 키]를 입력해 주세요!\n(입력하신 키는 브라우저에 안전하게 저장됩니다.)'
@@ -165,14 +207,13 @@ function Dashboard() {
             localStorage.setItem('kosmo_kakao_app_key', kakaoKey.trim())
             kakaoKey = kakaoKey.trim()
           } else {
-            return // 취소 시 리턴
+            return
           }
         }
 
         window.Kakao.init(kakaoKey)
       }
 
-      // 3. 카카오톡 공유 발송
       window.Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
@@ -205,8 +246,38 @@ function Dashboard() {
   const totalLectures = LECTURE_DATA.length
   const progressPercent = totalLectures > 0 ? Math.round((completedCount / totalLectures) * 100) : 0
 
+  // Mascot Speech Logic based on progress
+  const getMascotSpeech = (progress) => {
+    if (progress === 0) {
+      return "반가워냥! 🐾 나와 함께 신나는 리액트 탐험을 떠나볼까냥? 아래 실습 폴더를 하나씩 완료 체크해 보라옹! ⚛️✨"
+    } else if (progress > 0 && progress < 45) {
+      return `오오! 벌써 ${progress}%나 공부했다냥! 아주 대견하다옹. 오늘 코딩 공부도 화이팅이다냥! 🐟⭐`
+    } else if (progress >= 45 && progress < 80) {
+      return `와우! 절반이나 넘게 정복했다냥! 🧪⚡ 슬슬 리액트의 고수가 되어가는 느낌이다옹. 조금만 더 힘내자냥!`
+    } else if (progress >= 80 && progress < 100) {
+      return `거의 다 끝났다냥! 🏆 99%의 땀방울이 보석이 될 시간이다옹. 끝까지 달려보자냥! 야옹!`
+    } else {
+      return "대단해냥! 🏆🎉 리액트 모든 코스를 완벽하게 정복했다옹! 너는 이제 진짜 최강의 리액트 마스터다냥! 👑🐱"
+    }
+  }
+
   return (
-    <div className="container py-4">
+    <div className="container py-4 position-relative z-1">
+      {/* Background Animated Floating Bubbles */}
+      {BUBBLES.map((bub) => (
+        <div
+          key={bub.id}
+          className="bubble-bg"
+          style={{
+            left: bub.left,
+            width: bub.size,
+            height: bub.size,
+            animationDelay: bub.delay,
+            animationDuration: bub.duration
+          }}
+        />
+      ))}
+
       {/* 1. Theme and Quick Panel */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div className="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm">
@@ -215,7 +286,7 @@ function Dashboard() {
             <button
               key={theme}
               onClick={() => setActiveTheme(theme)}
-              className={`rounded-circle border-0`}
+              className="rounded-circle border-0"
               style={{
                 width: '20px',
                 height: '20px',
@@ -249,28 +320,38 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* 2. Hero Header Section */}
-      <div className="glass-card p-5 mb-5 text-center position-relative overflow-hidden glow-pink" style={{ minHeight: '260px' }}>
-        {/* Cute background decoration items */}
-        <span className="position-absolute fs-1 animate-float" style={{ top: '15%', left: '8%', opacity: 0.5, userSelect: 'none' }}>🚀</span>
-        <span className="position-absolute fs-1 animate-float" style={{ bottom: '15%', right: '8%', opacity: 0.5, userSelect: 'none', animationDelay: '1s' }}>✨</span>
-        <span className="position-absolute fs-2 animate-float" style={{ top: '70%', left: '12%', opacity: 0.4, userSelect: 'none', animationDelay: '2s' }}>⚛️</span>
-        <span className="position-absolute fs-2 animate-float" style={{ top: '20%', right: '15%', opacity: 0.4, userSelect: 'none', animationDelay: '1.5s' }}>💛</span>
+      {/* 2. Mascot & Hero Header Section */}
+      <div className="glass-card p-4 p-md-5 mb-5 text-center position-relative overflow-hidden glow-pink">
+        {/* Background sparkles */}
+        <span className="position-absolute fs-1 animate-float" style={{ top: '10%', left: '5%', opacity: 0.35, userSelect: 'none' }}>🚀</span>
+        <span className="position-absolute fs-1 animate-float" style={{ bottom: '15%', right: '5%', opacity: 0.35, userSelect: 'none', animationDelay: '1.2s' }}>✨</span>
+        <span className="position-absolute fs-2 animate-float" style={{ top: '75%', left: '8%', opacity: 0.3, userSelect: 'none', animationDelay: '2.4s' }}>⚛️</span>
+        <span className="position-absolute fs-2 animate-float" style={{ top: '15%', right: '12%', opacity: 0.3, userSelect: 'none', animationDelay: '1.8s' }}>💛</span>
         
-        <div className="position-relative z-1">
-          <h1 className="display-4 fw-bold mb-2" style={{ color: 'var(--text-dark)', textShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+        <div className="position-relative z-1 d-flex flex-column align-items-center">
+          {/* Rooky the React Cat Mascot */}
+          <div className="mascot-container d-flex flex-column align-items-center mb-4">
+            <div className="mascot-bubble mb-3 text-start position-relative">
+              {getMascotSpeech(progressPercent)}
+            </div>
+            <div className="d-flex align-items-center justify-content-center gap-2">
+              <span className="fs-1 animate-wave" style={{ cursor: 'pointer' }} title="야옹~">🐱⚛️</span>
+              <span className="badge bg-cute-purple badge-cute py-1.5 px-3 shadow-sm" style={{ fontSize: '0.8rem' }}>리액캣 루키 (Rooky)</span>
+            </div>
+          </div>
+
+          <h1 className="display-4 fw-bold mb-2" style={{ color: 'var(--text-dark)', textShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
             KOSMO React Lab 🧪
           </h1>
-          <p className="lead text-muted mx-auto mb-4" style={{ maxWidth: '650px', fontSize: '1.15rem' }}>
-            리액트 핵심 문법부터 파이어베이스 실시간 연동까지! 
-            직접 설계하고 빌드한 <strong className="text-dark">구동 가능한 5대 프로젝트</strong>와 알짜배기 실습 예제들을 한눈에 모아보세요.
+          <p className="lead text-muted mx-auto mb-4" style={{ maxWidth: '650px', fontSize: '1.1rem' }}>
+            리액트 5대 프로젝트와 진도 체크를 게임 퀘스트를 깨듯 신나게 탐험해 보세요!
           </p>
           <div className="d-flex justify-content-center gap-3">
             <a href="#projects" className="btn btn-cute btn-cute-primary px-4 py-2">
-              <i className="bi bi-play-circle-fill me-2"></i>프로젝트 실행하기
+              <i className="bi bi-play-circle-fill me-2"></i>프로젝트 실행
             </a>
             <a href="#lectures" className="btn btn-cute btn-cute-purple px-4 py-2">
-              <i className="bi bi-clipboard2-check-fill me-2"></i>진도 체크하기
+              <i className="bi bi-clipboard2-check-fill me-2"></i>퀘스트 깨러가기
             </a>
           </div>
         </div>
@@ -280,7 +361,7 @@ function Dashboard() {
       <section id="projects" className="mb-5">
         <div className="d-flex align-items-center gap-2 mb-4">
           <span className="fs-3">⭐</span>
-          <h2 className="m-0 h3 text-dark">5대 실전 프로젝트 플레이그라운드</h2>
+          <h2 className="m-0 h3 text-dark" style={{ fontFamily: 'var(--heading)' }}>5대 실전 프로젝트 플레이그라운드</h2>
           <span className="badge bg-cute-pink badge-cute ms-2">구동 가능</span>
         </div>
 
@@ -289,13 +370,13 @@ function Dashboard() {
             <div key={proj.id} className="col-12 col-md-6 col-lg-4">
               <div className={`card h-100 border-0 glass-card p-4 d-flex flex-column ${proj.glowClass}`}>
                 <div className="d-flex justify-content-between align-items-start mb-3">
-                  <div className="p-3 rounded-4 bg-light d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px' }}>
+                  <div className="p-3 rounded-4 bg-light d-flex align-items-center justify-content-center animate-bounce-slow" style={{ width: '56px', height: '56px' }}>
                     <i className={`bi ${proj.icon} fs-3`} style={{ color: proj.color }}></i>
                   </div>
                   <span className={`badge ${proj.badgeClass} badge-cute`}>{proj.badge}</span>
                 </div>
                 
-                <h3 className="h5 fw-bold text-dark mb-2">{proj.title}</h3>
+                <h3 className="h5 fw-bold text-dark mb-2" style={{ fontFamily: 'var(--heading)' }}>{proj.title}</h3>
                 <p className="text-muted small mb-4 flex-grow-1" style={{ lineHeight: '1.5' }}>{proj.desc}</p>
                 
                 <div className="border-top pt-3 d-flex justify-content-between align-items-center">
@@ -320,18 +401,18 @@ function Dashboard() {
         <div className="col-12 col-lg-7">
           <div className="card h-100 border-0 glass-card p-4 glow-pink">
             <h3 className="h5 fw-bold text-dark mb-3">
-              <i className="bi bi-pencil-square me-2 text-danger"></i>나만의 개발 메모장 (로컬 저장)
+              <i className="bi bi-pencil-square me-2 text-danger"></i>루키의 노란 메모장 📝
             </h3>
             <textarea
               className="form-control border-0 p-3 bg-light rounded-4 text-dark"
               rows="5"
               value={devNote}
               onChange={(e) => setDevNote(e.target.value)}
-              placeholder="오늘 배운 리액트 지식이나 해결한 버그를 기록해보세요! 브라우저를 껐다 켜도 유지됩니다."
-              style={{ resize: 'none', fontSize: '0.95rem', minHeight: '140px' }}
+              placeholder="오늘 배운 리액트 지식이나 해결한 버그를 기록해보세요! 브라우저를 껐다 켜도 안전하게 보관해 둔다냥!"
+              style={{ resize: 'none', fontSize: '0.95rem', minHeight: '140px', borderLeft: '4px solid #fff37a' }}
             />
             <div className="text-end text-muted small mt-2">
-              <i className="bi bi-cloud-check-fill me-1 text-success"></i>자동 저장됨
+              <i className="bi bi-cloud-check-fill me-1 text-success"></i>로컬에 자동 저장중
             </div>
           </div>
         </div>
@@ -341,7 +422,7 @@ function Dashboard() {
           <div className="card h-100 border-0 glass-card p-4 glow-purple d-flex flex-column justify-content-between">
             <div>
               <h3 className="h5 fw-bold text-dark mb-3">
-                <i className="bi bi-chat-quote-fill me-2 text-warning"></i>오늘의 동기부여 메세지 💬
+                <i className="bi bi-chat-quote-fill me-2 text-warning"></i>오늘의 개발 응원 한마디 💬
               </h3>
               
               <div 
@@ -356,7 +437,7 @@ function Dashboard() {
                   flexDirection: 'column'
                 }}
               >
-                <p className="fw-bold mb-2 text-dark" style={{ fontSize: '1.02rem', lineHeight: '1.4' }}>
+                <p className="fw-bold mb-2 text-dark" style={{ fontSize: '0.98rem', lineHeight: '1.4' }}>
                   "{DEV_QUOTES[quoteIdx].text}"
                 </p>
                 <small className="text-muted">- {DEV_QUOTES[quoteIdx].author}</small>
@@ -380,10 +461,10 @@ function Dashboard() {
             <div className="col-12 col-md-6">
               <div className="d-flex align-items-center gap-2">
                 <span className="fs-3">📚</span>
-                <h2 className="m-0 h3 text-dark">React 핵심 이론 및 강의 실습 목록</h2>
+                <h2 className="m-0 h3 text-dark">React 핵심 이론 및 실습 퀘스트</h2>
               </div>
               <p className="text-muted small mt-1 mb-0">
-                11단계의 실습 폴더 구조를 따라가며 배운 내용을 체크하고 진행도를 완성해 보세요!
+                11단계의 실습 폴더를 정복해 보라옹! 하트를 클릭하면 보석 스파클이 튑니다.
               </p>
             </div>
             
@@ -404,14 +485,33 @@ function Dashboard() {
             {LECTURE_DATA.map((lec) => (
               <div key={lec.id} className="col-12 col-md-6">
                 <label 
-                  className="d-flex align-items-center justify-content-between p-3 rounded-4 bg-white border border-light shadow-sm w-100" 
+                  onClick={(e) => handleToggleLecture(lec.id, e)}
+                  className="d-flex align-items-center justify-content-between p-3 rounded-4 bg-white border border-light shadow-sm w-100 position-relative overflow-hidden" 
                   style={{ 
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    borderLeft: lectureProgress[lec.id] ? '5px solid #1ac88a' : '5px solid #eae6f0',
-                    transform: lectureProgress[lec.id] ? 'scale(1.01)' : 'scale(1)'
+                    borderLeft: lectureProgress[lec.id] ? '6px solid #ff7b90' : '6px solid #eae6f0',
+                    transform: lectureProgress[lec.id] ? 'scale(1.01)' : 'scale(1)',
+                    boxShadow: lectureProgress[lec.id] ? '0 8px 16px rgba(255, 123, 144, 0.08)' : '0 4px 10px rgba(0,0,0,0.03)'
                   }}
                 >
+                  {/* Local Particle Sparkle rendering */}
+                  {particles.map((p) => (
+                    <div
+                      key={p.id}
+                      className="particle-sparkle"
+                      style={{
+                        left: p.x,
+                        top: p.y,
+                        width: p.size,
+                        height: p.size,
+                        backgroundColor: p.color,
+                        '--dx': p.dx,
+                        '--dy': p.dy
+                      }}
+                    />
+                  ))}
+
                   <div className="d-flex align-items-center gap-3">
                     <span className="fs-4">{lec.emoji}</span>
                     <div className="text-start">
@@ -425,21 +525,23 @@ function Dashboard() {
                     </div>
                   </div>
                   
-                  <input
-                    type="checkbox"
-                    className="checkbox-cute ms-2"
-                    checked={!!lectureProgress[lec.id]}
-                    onChange={() => handleToggleLecture(lec.id)}
-                  />
+                  {/* Custom Heart Checkbox style */}
+                  <div className={`ms-2 ${lectureProgress[lec.id] ? 'pop-active' : ''}`}>
+                    {lectureProgress[lec.id] ? (
+                      <i className="bi bi-heart-fill text-danger fs-4"></i>
+                    ) : (
+                      <i className="bi bi-heart text-muted fs-4"></i>
+                    )}
+                  </div>
                 </label>
               </div>
             ))}
           </div>
 
           {progressPercent === 100 && (
-            <div className="mt-4 p-4 rounded-4 bg-cute-mint border text-center animate-bounce-slow">
-              <h4 className="fw-bold text-success mb-1">🏆 축하합니다! 모든 리액트 학습을 정복하셨습니다! 🏆</h4>
-              <p className="text-success small mb-0">이제 나만의 더 거대한 웹 서비스를 개발하러 나아갈 준비가 되었습니다.</p>
+            <div className="mt-4 p-4 rounded-4 bg-cute-pink border text-center animate-bounce-slow" style={{ borderStyle: 'dashed' }}>
+              <h4 className="fw-bold text-danger mb-1">🎉 냐아옹! 모든 리액트 미션을 클리어했다옹! 🎉</h4>
+              <p className="text-danger small mb-0">진짜 최강의 마스터 리액트 개발자가 탄생했다냥! 언제든 나만의 앱을 만들어보라옹!</p>
             </div>
           )}
         </div>
