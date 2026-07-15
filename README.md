@@ -1,5 +1,7 @@
 # React Playland 🚀✨ | My Cute Study Lab
 
+![React Dashboard Preview](./dashboard_preview.png)
+
 리액트(React) 핵심 문법부터 파이어베이스(Firebase) 실시간 데이터베이스 연동까지!  
 학습 과정에서 개발한 **5대 실전 프로젝트**와 **11대 핵심 강좌**를 한눈에 볼 수 있는 아기자기하고 예쁜 **리액트 학습 대시보드 홈페이지**입니다.
 
